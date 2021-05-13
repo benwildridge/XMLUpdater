@@ -72,10 +72,10 @@ namespace UI
                     if (XMLCurrentBoardCode == currentBoardCode)
                         {
                        root.SetAttribute("BrdCode", $"{newBoardCode}");
-                        }
+                       Logger($"{file} " + "was updated");
+                       doc.Save(file);
+                    }
 
-                    doc.Save(file);
-                    Logger($"{file} " +  "was updated");
                 }
             }
             if ((bool)checkBoxWest.IsChecked)
@@ -93,10 +93,12 @@ namespace UI
                     if (XMLCurrentBoardCode == currentBoardCode)
                     {
                         root.SetAttribute("BrdCode", $"{newBoardCode}");
+                        Logger($"{file} " + "was updated");
+                        doc.Save(file);
                     }
 
-                    doc.Save(file);
-                    Logger($"{file} " + "was updated");
+
+                    
                 }
             }
             if ((bool)checkBoxMultIE.IsChecked)
@@ -114,10 +116,11 @@ namespace UI
                     if (XMLCurrentBoardCode == currentBoardCode)
                     {
                         root.SetAttribute("BrdCode", $"{newBoardCode}");
+                        Logger($"{file} " + "was updated");
+                        doc.Save(file);
                     }
 
-                    doc.Save(file);
-                    Logger($"{file} " + "was updated");
+                    
                 }
             }
             if ((bool)checkBoxMultiW.IsChecked)
@@ -135,10 +138,11 @@ namespace UI
                     if (XMLCurrentBoardCode == currentBoardCode)
                     {
                         root.SetAttribute("BrdCode", $"{newBoardCode}");
+                        Logger($"{file} " + "was updated");
+                        doc.Save(file);
                     }
 
-                    doc.Save(file);
-                    Logger($"{file} " + "was updated");
+                    
                 }
             }
         }
@@ -192,6 +196,7 @@ namespace UI
                     currentBoardCode = currentBoardCodeTextBox.Text;
                     newBoardCode = newBoardCodeTextBox.Text;
                     UpdateFiles();
+                    MessageBox.Show("Update Complete. Check C:\\Temp\\Log for details of files updated" + Environment.NewLine + "You can now close the application.");
                     break;
 
                 case MessageBoxResult.No:
