@@ -23,7 +23,9 @@ namespace UI
     /// </summary>
     //TODO - Update window to be Howdenised
     //TODO - Block update button if no tickboxes are checked
-    //TODO - Add error handling if the XML is not in the correct structure and output to log file.
+    //TODO - Prefill BOD in boxes
+    //TODO - Add comments to everything
+    //TODO - Block update if one of the fields is black and produce error
 
 
     public partial class MainWindow : Window
@@ -31,6 +33,8 @@ namespace UI
 
         private string currentBoardCode = "";
         private string newBoardCode = "";
+        private bool errorOccured = false;
+        private bool fileUpdated = false;
 
 
         public static void VerifyDir(string path)
@@ -55,11 +59,11 @@ namespace UI
             {
                 files.AddRange(System.IO.Directory.GetFiles(System.Configuration.ConfigurationManager.AppSettings["STD"], "*.xml").ToList());
             }
-            if((bool)checkBoxWest.IsChecked)
+            if ((bool)checkBoxWest.IsChecked)
             {
                 files.AddRange(System.IO.Directory.GetFiles(System.Configuration.ConfigurationManager.AppSettings["WEST"], "*.xml").ToList());
             }
-            if((bool)checkBoxMultiW.IsChecked)
+            if ((bool)checkBoxMultiW.IsChecked)
             {
                 files.AddRange(System.IO.Directory.GetFiles(System.Configuration.ConfigurationManager.AppSettings["MULTIW"], "*.xml").ToList());
             }
@@ -67,20 +71,30 @@ namespace UI
             {
                 files.AddRange(System.IO.Directory.GetFiles(System.Configuration.ConfigurationManager.AppSettings["MULTIE"], "*.xml").ToList());
             }
-                foreach (string file in files)
+            foreach (string file in files)
             {
-                XmlDocument doc = new XmlDocument();
-                doc.Load(file);
-                XmlElement root = (XmlElement)doc.DocumentElement.SelectSingleNode("//CutList/Board");
-                string XMLCurrentBoardCode = root.GetAttribute("BrdCode");
-
-                if (XMLCurrentBoardCode == currentBoardCode)
+                try
                 {
-                    root.SetAttribute("BrdCode", $"{newBoardCode}");
-                    Logger($"{file} " + "was updated");
-                    doc.Save(file);
-                }
+                    {
+                        XmlDocument doc = new XmlDocument();
+                        doc.Load(file);
+                        XmlElement root = (XmlElement)doc.DocumentElement.SelectSingleNode("//CutList/Board");
+                        string XMLCurrentBoardCode = root.GetAttribute("BrdCode");
 
+                        if (XMLCurrentBoardCode == currentBoardCode)
+                        {
+                            root.SetAttribute("BrdCode", $"{newBoardCode}");
+                            Logger($"{file} " + "was updated");
+                            doc.Save(file);
+                            fileUpdated = true;
+                        }
+                    }
+                }
+                catch (Exception) 
+                {
+                 Logger($"{file} " + "could not be checked due to the XML formatting, please correct this before trying again.");
+                    errorOccured = true;
+                }
             }
         }
 
@@ -147,10 +161,26 @@ namespace UI
                     currentBoardCode = currentBoardCodeTextBox.Text;
                     newBoardCode = newBoardCodeTextBox.Text;
                     XMLUpdate();
-                    //TODO - Update Message Box to show nicer
-                    MessageBox.Show("Update Complete. Check C:\\Temp\\Log for details of files updated." + Environment.NewLine + "You can now close the application.");
-                    break;
+                    if (fileUpdated == false)
+                    {
+                        Logger("No files that could be checked met the criteria of updating" + $" {currentBoardCode} " + "to"+ $" {newBoardCode} ");
+                        MessageBox.Show("No files were updated. Please check C:\\Temp\\Log for details." + Environment.NewLine + "You can now close the application.");
+                        break;
+                    }
+                    else if (errorOccured == true)
+                    {
+                        MessageBox.Show("Update Complete." + Environment.NewLine + "Some files had errors. Please check C:\\Temp\\Log for details." + Environment.NewLine + "You can now close the application.");
 
+                        break;
+                    }
+
+                    else
+                    {
+                        //TODO - Update Message Box to show nicer
+                        MessageBox.Show("Update Complete. Check C:\\Temp\\Log for details of files updated." + Environment.NewLine + "You can now close the application.");
+                        
+                        break;
+                    }
                 case MessageBoxResult.No:
                     break;
             }
