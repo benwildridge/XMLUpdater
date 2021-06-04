@@ -21,9 +21,7 @@ namespace UI
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    //TODO - Update window to be Howdenised
     //TODO - Block update button if no tickboxes are checked
-    //TODO - Prefill BOD in boxes
     //TODO - Add comments to everything
     //TODO - Block update if one of the fields is black and produce error
 
@@ -115,6 +113,8 @@ namespace UI
         public MainWindow()
         {
             InitializeComponent();
+            currentBoardCodeTextBox.Text = "BOD";
+            newBoardCodeTextBox.Text = "BOD";
         }
 
         public void currentBoardCodeTextBox_TextChanged(object sender, TextChangedEventArgs e)
