@@ -18,11 +18,7 @@ using System.Xml.Linq;
 
 namespace UI
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    //TODO - Block update button if no tickboxes are checked
-    //TODO - Add comments to everything
+
     //TODO - Block update if one of the fields is black and produce error
 
 
@@ -34,8 +30,8 @@ namespace UI
         private bool errorOccured = false;
         private bool fileUpdated = false;
 
-
         public static void VerifyDir(string path)
+            //Method to check if the directory exists, if it doesn't it creates it. Used in the logging Method
         {
             try
             {
@@ -50,7 +46,7 @@ namespace UI
 
         public void XMLUpdate()
         {
-
+            // Checks which checkboxes were ticked and compiles them into a List
             List<string> files = new List<string>();
 
             if ((bool)checkBoxSTD.IsChecked)
@@ -71,6 +67,9 @@ namespace UI
             }
             foreach (string file in files)
             {
+                // For all the files in all the directories in the list, it loads the file, checks the BrdCode against the currentBoardCode and updates it if it matches. 
+                //Then adds an entry to the log file, saves the file and flags the variable to show an update has taken place.
+                //Error catch in place for if the XML document isn't formatted to have "//CutList/Board//BrdCode"
                 try
                 {
                     {
@@ -98,6 +97,7 @@ namespace UI
 
         public static void Logger(string lines)
         {
+            //Logfile functionality method
             string path = "C:/temp/Log/";
             VerifyDir(path);
             string fileName = DateTime.Now.Day.ToString() + DateTime.Now.Month.ToString() + DateTime.Now.Year.ToString() + "_Logs.txt";
@@ -110,27 +110,95 @@ namespace UI
             catch (Exception) { }
         }
 
+        private void ButtonEnableChecks()
+        // Checks that the inut textboxes have changed and that there is at least 1 tickbox selected in order to the do the update.
+        {
+            if (string.Equals(currentBoardCodeTextBox.Text, "BOD"))
+            {
+                updateButton.IsEnabled = false;
+            }
+            else if (string.Equals(currentBoardCodeTextBox.Text, "BOD"))
+            {
+                updateButton.IsEnabled = false;
+            }
+            else if (checkBoxSTD.IsChecked == true)
+            {
+                updateButton.IsEnabled = true;
+            }
+            else if (checkBoxWest.IsChecked == true)
+            {
+                updateButton.IsEnabled = true;
+            }
+            else if (checkBoxMultIE.IsChecked == true)
+            {
+                updateButton.IsEnabled = true;
+            }
+            else if (checkBoxMultiW.IsChecked == true)
+            {
+                updateButton.IsEnabled = true;
+            }
+            else
+            {
+                updateButton.IsEnabled = false;
+            }
+        }
+
+        private void checkBoxSTD_Checked(object sender, RoutedEventArgs e)
+        {
+            ButtonEnableChecks();
+        }
+        private void checkBoxSTD_UnChecked(object sender, RoutedEventArgs e)
+        {
+            ButtonEnableChecks();
+        }
+        private void checkBoxWest_Checked(object sender, RoutedEventArgs e)
+        {
+            ButtonEnableChecks();
+        }
+        private void checkBoxWest_Unchecked(object sender, RoutedEventArgs e)
+        {
+            ButtonEnableChecks();
+        }
+        private void checkBoxMultiW_Checked(object sender, RoutedEventArgs e)
+        {
+            ButtonEnableChecks();
+        }
+        private void checkBoxMultiW_Unchecked(object sender, RoutedEventArgs e)
+        {
+            ButtonEnableChecks();
+        }
+        private void checkBoxMultIE_Checked(object sender, RoutedEventArgs e)
+        {
+            ButtonEnableChecks();
+        }
+        private void checkBoxMultIE_Unchecked(object sender, RoutedEventArgs e)
+        {
+            ButtonEnableChecks();
+        }
+
         public MainWindow()
         {
             InitializeComponent();
             currentBoardCodeTextBox.Text = "BOD";
             newBoardCodeTextBox.Text = "BOD";
+            updateButton.IsEnabled = false;
         }
 
         public void currentBoardCodeTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-
-
+            ButtonEnableChecks();
         }
 
         public void newBoardCodeTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-
+            ButtonEnableChecks();
         }
 
         
         private void updateButton_Click(object sender, RoutedEventArgs e)
         {
+            //Produces message on screen to confirm that update will take place with selected paramamters. Yes proceeds up with update. No closes the process.
+
             currentBoardCode = currentBoardCodeTextBox.Text;
             newBoardCode = newBoardCodeTextBox.Text;
             var Checkboxlist = $"The following folders will be updated: "
@@ -157,6 +225,8 @@ namespace UI
 
             switch (rsltMessageBox)
             {
+                //runs the through the XMLUpdate method and then brings back different messages based on what happen
+                //No update - Update - Update with errors
                 case MessageBoxResult.Yes:
                     currentBoardCode = currentBoardCodeTextBox.Text;
                     newBoardCode = newBoardCodeTextBox.Text;
@@ -186,5 +256,6 @@ namespace UI
             }
 
         }
+
     }
 }

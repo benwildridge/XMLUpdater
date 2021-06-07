@@ -36,7 +36,7 @@
         <TextBlock Grid.Column="1" Grid.Row="4" Text="New Board Code" FontSize="20" Grid.ColumnSpan="2"  FontWeight="Bold" Margin="0,30,0,0"/>
         <TextBox x:Name="newBoardCodeTextBox" Grid.Column="3" Grid.Row="4" Width="250" Margin="30,30,0,0" FontSize="20" TextChanged="newBoardCodeTextBox_TextChanged"/>
         <TextBlock Grid.Column="1" Grid.Row="5" Text="Select Folders To Update" FontSize="24" Grid.ColumnSpan="3" Margin="0,30,0,20" FontWeight="Bold"/>
-        <CheckBox x:Name="checkBoxSTD" Grid.Column="1" Grid.Row="6" FontSize="18" VerticalContentAlignment="Center" Margin="0,0,85,0">
+        <CheckBox x:Name="checkBoxSTD" Grid.Column="1" Grid.Row="6" FontSize="18" VerticalContentAlignment="Center" Margin="0,0,85,0" Checked="checkBoxSTD_Checked" Unchecked="checkBoxSTD_UnChecked">
             <CheckBox.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
@@ -46,7 +46,7 @@
                 </TransformGroup>
             </CheckBox.RenderTransform> STD
         </CheckBox>
-        <CheckBox x:Name="checkBoxWest" Grid.Column="2" Grid.Row="6" FontSize="18" VerticalContentAlignment="Center" Margin="0,0,85,0">
+        <CheckBox x:Name="checkBoxWest" Grid.Column="2" Grid.Row="6" FontSize="18" VerticalContentAlignment="Center" Margin="0,0,85,0" Checked="checkBoxWest_Checked" Unchecked="checkBoxWest_Unchecked">
             <CheckBox.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
@@ -56,7 +56,7 @@
                 </TransformGroup>
             </CheckBox.RenderTransform> WEST
         </CheckBox>
-        <CheckBox x:Name="checkBoxMultiW" Grid.Column="3" Grid.Row="6" FontSize="18" VerticalContentAlignment="Center" Margin="0,0,85,0" Content="MULTIW">
+        <CheckBox x:Name="checkBoxMultiW" Grid.Column="3" Grid.Row="6" FontSize="18" VerticalContentAlignment="Center" Margin="0,0,85,0" Content="MULTIW" Checked="checkBoxMultiW_Checked" Unchecked="checkBoxMultiW_Unchecked">
             <CheckBox.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
@@ -66,7 +66,7 @@
                 </TransformGroup>
             </CheckBox.RenderTransform>
         </CheckBox>
-        <CheckBox x:Name="checkBoxMultIE" Grid.Column="4" Grid.Row="6" FontSize="18" VerticalContentAlignment="Center" Margin="-100,0,0,0" Content="MULTIE">
+        <CheckBox x:Name="checkBoxMultIE" Grid.Column="4" Grid.Row="6" FontSize="18" VerticalContentAlignment="Center" Margin="-100,0,0,0" Content="MULTIE" Checked="checkBoxMultIE_Checked" Unchecked="checkBoxMultIE_Unchecked">
             <CheckBox.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform ScaleX="1.2" ScaleY="1.2"/>
@@ -76,7 +76,7 @@
                 </TransformGroup>
             </CheckBox.RenderTransform>
         </CheckBox>
-        <Button x:Name="updateButton" Grid.Column="2" Grid.Row="7" Margin="0,50,0,0" Grid.ColumnSpan="2" FontSize="20" FontWeight="Bold" Click="updateButton_Click">
+        <Button x:Name="updateButton" Grid.Column="2" Grid.Row="7" Margin="0,50,0,0" Grid.ColumnSpan="2" FontSize="20" FontWeight="Bold" Click="updateButton_Click" IsEnabled="False">
             Update Boardcodes in XMLs
         </Button>
     </Grid>
