@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
+using System.ComponentModel;
 
 // parrallel for each to increase performance
 // add current board code and to board code on the logging
@@ -32,7 +33,9 @@ namespace UI
         private int fileCount;
         private int fileUpdatedCount;
         private int fileProcessingCount;
-        
+        private readonly BackgroundWorker backgroundWorker1 = new BackgroundWorker();
+        private List<string> fileList = new List<string>();
+
 
         public static void VerifyDir(string path)
             //Method to check if the directory exists, if it doesn't it creates it. Used in the logging Method
@@ -48,9 +51,14 @@ namespace UI
             catch { }
         }
 
+        private void backgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            NewMethod(fileList);
+        }
+
         public void XMLUpdate()
         {
-            
+
             // Checks which checkboxes were ticked and compiles them into a List
             List<string> files = new List<string>();
 
@@ -73,7 +81,15 @@ namespace UI
             fileCount = files.Count;
             fileUpdatedCount = 0;
             fileProcessingCount = 0;
-            //foreach (string file in files)
+            //NewMethod(files);
+            fileList = files;
+            backgroundWorker1.RunWorkerAsync();
+            processStatus.IsIndeterminate = false;
+            processStatus.Visibility = Visibility.Hidden;
+        }
+
+        private void NewMethod(List<string> files)
+        {
             Parallel.ForEach(files, (file) =>
             {
                 // For all the files in all the directories in the list, it loads the file, checks the BrdCode against the currentBoardCode and updates it if it matches. 
@@ -190,6 +206,7 @@ namespace UI
         public MainWindow()
         {
             InitializeComponent();
+            backgroundWorker1.DoWork += backgroundWorker1_DoWork;
             currentBoardCodeTextBox.Text = "BOD";
             newBoardCodeTextBox.Text = "BOD";
             updateButton.IsEnabled = false;
@@ -242,6 +259,8 @@ namespace UI
                 case MessageBoxResult.Yes:
                     currentBoardCode = currentBoardCodeTextBox.Text;
                     newBoardCode = newBoardCodeTextBox.Text;
+                    processStatus.Visibility = Visibility.Visible;
+                    processStatus.IsIndeterminate = true;
                     XMLUpdate();
                     if (fileUpdated == false)
                     {
