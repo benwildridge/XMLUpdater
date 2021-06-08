@@ -16,8 +16,12 @@ using System.IO;
 using System.Xml;
 using System.Xml.Linq;
 
+// parrallel for each to increase performance
+// add current board code and to board code on the logging
+
 namespace UI
 {
+    
     public partial class MainWindow : Window
     {
 
@@ -25,6 +29,10 @@ namespace UI
         private string newBoardCode = "";
         private bool errorOccured = false;
         private bool fileUpdated = false;
+        private int fileCount;
+        private int fileUpdatedCount;
+        private int fileProcessingCount;
+        
 
         public static void VerifyDir(string path)
             //Method to check if the directory exists, if it doesn't it creates it. Used in the logging Method
@@ -42,6 +50,7 @@ namespace UI
 
         public void XMLUpdate()
         {
+            
             // Checks which checkboxes were ticked and compiles them into a List
             List<string> files = new List<string>();
 
@@ -61,7 +70,11 @@ namespace UI
             {
                 files.AddRange(System.IO.Directory.GetFiles(System.Configuration.ConfigurationManager.AppSettings["MULTIE"], "*.xml").ToList());
             }
-            foreach (string file in files)
+            fileCount = files.Count;
+            fileUpdatedCount = 0;
+            fileProcessingCount = 0;
+            //foreach (string file in files)
+            Parallel.ForEach(files, (file) =>
             {
                 // For all the files in all the directories in the list, it loads the file, checks the BrdCode against the currentBoardCode and updates it if it matches. 
                 //Then adds an entry to the log file, saves the file and flags the variable to show an update has taken place.
@@ -71,6 +84,7 @@ namespace UI
                     {
                         XmlDocument doc = new XmlDocument();
                         doc.Load(file);
+                        fileProcessingCount = fileProcessingCount + 1;
                         XmlElement root = (XmlElement)doc.DocumentElement.SelectSingleNode("//CutList/Board");
                         string XMLCurrentBoardCode = root.GetAttribute("BrdCode");
 
@@ -80,15 +94,16 @@ namespace UI
                             Logger($"{file} " + "was updated");
                             doc.Save(file);
                             fileUpdated = true;
+                            fileUpdatedCount = fileUpdatedCount + 1;
                         }
                     }
                 }
-                catch (Exception) 
+                catch (Exception)
                 {
-                 Logger($"{file} " + "could not be checked due to the XML formatting, please correct this before trying again.");
+                    Logger($"{file} " + "could not be checked due to the XML formatting, please correct this before trying again.");
                     errorOccured = true;
                 }
-            }
+            });
         }
 
         public static void Logger(string lines)
@@ -178,6 +193,7 @@ namespace UI
             currentBoardCodeTextBox.Text = "BOD";
             newBoardCodeTextBox.Text = "BOD";
             updateButton.IsEnabled = false;
+            processStatus.Visibility = Visibility.Hidden;
         }
 
         public void currentBoardCodeTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -231,21 +247,28 @@ namespace UI
                     {
                         Logger("No files that could be checked met the criteria of updating" + $" {currentBoardCode} " + "to"+ $" {newBoardCode} ");
                         MessageBox.Show("No files were updated. Please check C:\\Temp\\Log for details." + Environment.NewLine + "You can now close the application.");
+                        Logger("Number of files checked: " + $"{fileCount}");
+                        Logger("Number of files updated: " + $"{fileUpdatedCount}");
                         break;
+
                     }
                     else if (errorOccured == true)
                     {
                         MessageBox.Show("Update Complete." + Environment.NewLine + "Some files had errors. Please check C:\\Temp\\Log for details." + Environment.NewLine + "You can now close the application.");
-
+                        Logger("Number of files checked: " + $"{fileCount}");
+                        Logger("Number of files updated: " + $"{fileUpdatedCount}");
                         break;
+
                     }
 
                     else
                     {
                         //TODO - Update Message Box to show nicer
                         MessageBox.Show("Update Complete. Check C:\\Temp\\Log for details of files updated." + Environment.NewLine + "You can now close the application.");
-                        
+                        Logger("Number of files checked: " + $"{fileCount}");
+                        Logger("Number of files updated: " + $"{fileUpdatedCount}");
                         break;
+
                     }
                 case MessageBoxResult.No:
                     break;
