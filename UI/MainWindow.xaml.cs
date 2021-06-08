@@ -102,7 +102,7 @@ namespace UI
                     Logger($"{file} " + "could not be checked due to the XML formatting, please correct this before trying again.");
                     errorOccured = true;
                 }
-            });
+            }
         }
 
         public static void Logger(string lines)
