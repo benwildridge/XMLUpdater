@@ -17,8 +17,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.ComponentModel;
 
-// parrallel for each to increase performance
-// add current board code and to board code on the logging
+
 
 namespace UI
 {
@@ -33,6 +32,7 @@ namespace UI
         private int fileCount;
         private int fileUpdatedCount;
         private int fileProcessingCount;
+        
 
         public static void VerifyDir(string path)
         //Method to check if the directory exists, if it doesn't it creates it. Used in the logging Method
@@ -72,6 +72,7 @@ namespace UI
             fileCount = files.Count;
             fileUpdatedCount = 0;
             fileProcessingCount = 0;
+            
             //foreach (string file in files)
             Parallel.ForEach(files, (file) =>
             {
@@ -212,17 +213,20 @@ namespace UI
             currentBoardCode = currentBoardCodeTextBox.Text;
             newBoardCode = newBoardCodeTextBox.Text;
             var Checkboxlist = $"The following folders will be updated: "
-                + Environment.NewLine + ""
-                + Environment.NewLine +
-                ((bool)checkBoxSTD.IsChecked ? "STD " : "") +
-                ((bool)checkBoxWest.IsChecked ? "WEST " : "") +
-                ((bool)checkBoxMultIE.IsChecked ? "MULTIE " : "") +
+                + Environment.NewLine + "" + Environment.NewLine +
+               ((bool)checkBoxSTD.IsChecked ? "STD " : "") + Environment.NewLine +
+                ((bool)checkBoxWest.IsChecked ? "WEST " : "") + Environment.NewLine +
+                ((bool)checkBoxMultIE.IsChecked ? "MULTIE " : "") + Environment.NewLine +
                 ((bool)checkBoxMultiW.IsChecked ? "MULTIW " : "")
                 + Environment.NewLine + ""
                 + Environment.NewLine + "With the below values:"
                 + Environment.NewLine + ""
-                + Environment.NewLine + "Current Board Code: " + $"{currentBoardCode}"
-                + Environment.NewLine + "New Board Code: " + $"{newBoardCode}";
+                + Environment.NewLine + "Current Board Code: "+ Environment.NewLine + $"{currentBoardCode}"
+                + Environment.NewLine 
+                + Environment.NewLine + "New Board Code: " + Environment.NewLine + $"{newBoardCode}";
+
+            updateButton.Content = "Processing";
+            updateButton.IsEnabled = false;
 
             string sCaption = "XMLUpdater";
 
@@ -241,6 +245,8 @@ namespace UI
                     currentBoardCode = currentBoardCodeTextBox.Text;
                     newBoardCode = newBoardCodeTextBox.Text;
                     XMLUpdate();
+                    updateButton.Content = "Update Boardcodes in XMLs";
+                    updateButton.IsEnabled = true;
                     if (fileUpdated == false)
                     {
                         Logger("No files that could be checked met the criteria of updating" + $" {currentBoardCode} " + "to" + $" {newBoardCode} ");
@@ -252,7 +258,7 @@ namespace UI
                     }
                     else if (errorOccured == true)
                     {
-                        MessageBox.Show("Update Complete." + Environment.NewLine + "Some files had errors. Please check C:\\Temp\\Log for details." + Environment.NewLine + "You can now close the application.");
+                        MessageBox.Show($"{fileUpdatedCount}" + " Update Complete." + Environment.NewLine + Environment.NewLine + "Some files had errors. Please check C:\\Temp\\Log for details." + Environment.NewLine + Environment.NewLine + "You can now close the application.");
                         Logger("Number of files checked: " + $"{fileCount}");
                         Logger("Number of files updated: " + $"{fileUpdatedCount}");
                         break;
@@ -261,8 +267,7 @@ namespace UI
 
                     else
                     {
-                        //TODO - Update Message Box to show nicer
-                        MessageBox.Show("Update Complete. Check C:\\Temp\\Log for details of files updated." + Environment.NewLine + "You can now close the application.");
+                        MessageBox.Show($"{fileUpdatedCount}" + " Files Updated" + Environment.NewLine + Environment.NewLine + "Update Complete. Check C:\\Temp\\Log for details of files updated." + Environment.NewLine + Environment.NewLine + "You can now close the application.", "Files Updated");
                         Logger("Number of files checked: " + $"{fileCount}");
                         Logger("Number of files updated: " + $"{fileUpdatedCount}");
                         break;
