@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:UI"
         mc:Ignorable="d"
         Title="XMLUpdater" Height="450" Width="800"
-        Icon= "/Images/Howdens Logo_Full.jpg">
+        Icon= "/Images/Howdens Logo_Full.jpg"
+        ResizeMode="NoResize">
 <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20"/>
